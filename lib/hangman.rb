@@ -26,8 +26,8 @@ class Hangman
 		@played_letters = []
 		@guess = ""
 
-		puts "Your word is #{@word.join("")}"
-		puts @hidden_word.join(" ")
+		puts "Your word is #{@word.join("")}" # TEST LINE
+		puts @hidden_word.join(" ") # TEST LINE
 
 		guessing_loop
 	end
@@ -39,7 +39,7 @@ class Hangman
 	def generate_word
 		file = File.readlines("words.txt")
 		n = rand(0..file.length - 1)
-		[*file][n].chomp.split("")
+		[*file][n].chomp.downcase.split("")
 	end
 
 	def generate_hidden_word
@@ -48,44 +48,63 @@ class Hangman
 	end
 
 	def guessing_loop
+		puts "\n\n\n" #TEST LINE
 		until @hidden_word == @word || @wrong_guesses_remaining == 0
-			puts "Please enter a letter."
+			puts "_____________________________________"
+			puts "\n#{@wrong_guesses_remaining} incorrect guesses remaining."
+			puts "\nPlease enter a letter.\n\n"
+			puts "#{@hidden_word.join(" ")}\n\n"
 			enter_guess
 			while letter_already_played?
 				puts "You've already played that letter. Enter another."
 				enter_guess
 			end
-			letter_included? ? reveal_letter(@guess) : @wrong_guesses_remaining -= 1
+			letter_included? ? reveal_letter : incorrect_guess
 			add_played_letter
 		end
-		@guess == @word ? player_wins : player_loses
+		@hidden_word == @word ? player_wins : player_loses
 	end
 
 	def enter_guess
 		@guess = ""
-		until @guess.downcase =~ /[a-z]/
-			@guess = gets.chomp
-			puts "That is not a letter! Please enter a letter." unless @guess.downcase =~ /[a-z]/
+		until @guess =~ /[a-z]/
+			@guess = gets.chomp.downcase
+			puts "That is not a letter! Please enter a letter." unless @guess =~ /[a-z]/
 		end
 	end
 
 	def letter_already_played?
+		@played_letters.include?(@guess) ? true : false
 	end
 
 	def letter_included?
+		@word.include?(@guess) ? true : false
 	end
 
-	def reveal_letter(guess)
+	def reveal_letter
+		@word.each_with_index do |letter, index|
+			if letter == @guess
+				@hidden_word[index] = letter
+			end
+		end
 	end
 
 	def add_played_letter
-		@played_letters << @guess.downcase
+		@played_letters << @guess
+	end
+
+	def incorrect_guess
+		puts "Nope! The word doesn't contain that letter."
+		@wrong_guesses_remaining -= 1
 	end
 
 	def player_wins
+		puts "Congratulations! You guessed the word!"
 	end
 
 	def player_loses
+		puts "\nYou're out of remaining guesses!"
+		puts "The correct word was #{@word.join("")}."
 	end
 
 end
