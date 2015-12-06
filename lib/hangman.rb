@@ -26,8 +26,8 @@ class Hangman
 		@played_letters = []
 		@guess = ""
 
-		puts "Your word is #{@word.join("")}" # TEST LINE
-		puts @hidden_word.join(" ") # TEST LINE
+		#puts "Your word is #{@word.join("")}" # TEST LINE
+		#puts @hidden_word.join(" ") # TEST LINE
 
 		guessing_loop
 	end
@@ -52,7 +52,8 @@ class Hangman
 		until @hidden_word == @word || @wrong_guesses_remaining == 0
 			puts "_____________________________________"
 			puts "\n#{@wrong_guesses_remaining} incorrect guesses remaining."
-			puts "\nPlease enter a letter.\n\n"
+			puts "Already entered: #{@played_letters.sort.join(" ").upcase}"
+			puts "\nEnter a letter.\n\n"
 			puts "#{@hidden_word.join(" ")}\n\n"
 			enter_guess
 			while letter_already_played?
@@ -61,6 +62,7 @@ class Hangman
 			end
 			letter_included? ? reveal_letter : incorrect_guess
 			add_played_letter
+			sleep(1) unless @word.include?(@guess)
 		end
 		@hidden_word == @word ? player_wins : player_loses
 	end
@@ -99,7 +101,8 @@ class Hangman
 	end
 
 	def player_wins
-		puts "Congratulations! You guessed the word!"
+		puts "\nCongratulations! You guessed the word!"
+		puts @word.join(" ")
 	end
 
 	def player_loses
