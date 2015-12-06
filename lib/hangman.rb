@@ -25,10 +25,7 @@ class Hangman
 		@hidden_word = generate_hidden_word
 		@played_letters = []
 		@guess = ""
-
-		#puts "Your word is #{@word.join("")}" # TEST LINE
-		#puts @hidden_word.join(" ") # TEST LINE
-
+		puts "\nEnter 'SAVE' at any time to save and quit."
 		guessing_loop
 	end
 
@@ -39,20 +36,18 @@ class Hangman
 	def generate_word
 		file = File.readlines("words.txt")
 		n = rand(0..file.length - 1)
-		[*file][n].chomp.downcase.split("")
+		file[n].chomp.downcase.split("")
 	end
 
 	def generate_hidden_word
-		word = @word.collect { |letter| "__"}
-		word
+		@word.collect { |letter| "__"}
 	end
 
 	def guessing_loop
-		puts "\n\n\n" #TEST LINE
 		until @hidden_word == @word || @wrong_guesses_remaining == 0
 			puts "_____________________________________"
 			puts "\n#{@wrong_guesses_remaining} incorrect guesses remaining."
-			puts "Already entered: #{@played_letters.sort.join(" ").upcase}"
+			puts "Already entered: #{@played_letters.sort.join(" ").upcase}" if @played_letters.count > 0
 			puts "\nEnter a letter.\n\n"
 			puts "#{@hidden_word.join(" ")}\n\n"
 			enter_guess
@@ -69,10 +64,22 @@ class Hangman
 
 	def enter_guess
 		@guess = ""
-		until @guess =~ /[a-z]/
+		until @guess =~ /^[a-z]$/
 			@guess = gets.chomp.downcase
-			puts "That is not a letter! Please enter a letter." unless @guess =~ /[a-z]/
+			save if @guess.downcase == "save"
+			puts "That is not a letter! Please enter a letter." unless @guess =~ /^[a-z]$/
 		end
+	end
+
+	def save
+		# add code to save game
+		print "Saving"
+		3.times do
+			sleep(0.5)
+			print "."
+		end
+		sleep(0.5)
+		abort("\nGoodbye!")
 	end
 
 	def letter_already_played?
