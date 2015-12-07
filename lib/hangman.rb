@@ -3,7 +3,6 @@ require 'yaml'
 class Hangman
 	def initialize
 		print "Welcome to Hangman!\n\n"
-		main_menu
 	end
 
 	def main_menu
@@ -32,27 +31,49 @@ class Hangman
 	end
 
 	def load_game
-		if File.exist?("save_file.yml")
-			File.open("save_file.yml", "r") do |f|
+		Dir.mkdir("save_games") unless Dir.exists?("save_games")
+		save_files = Dir["./save_games/*"]
+		if save_files == []
+			puts "\nNo saves games found.\n\n"
+			main_menu
+		else
+			puts "\nChoose a save."
+			save_files.each_with_index do |file, index|
+				puts "[#{index + 1}] - #{file}"
+			end
+			input = gets.to_i
+			until input.between?(1, save_files.count)
+				puts "please enter a valid number."
+			end
+			file = save_files[input-1]
+			File.open(file, "r") do |f|
 				game = YAML.load(f.read)
 				assign_load_variables(game)
 			end
 			puts "Welcome back!"
 			guessing_loop
-		else
-			puts "No saved games found.\n\n"
-			main_menu
 		end
 	end
 
+	def list_game_save(file)
+		# Output names as "[1] - 12:16:59 07/12/2015"
+		puts file
+	end
+
 	def save_game
+		Dir.mkdir("save_games") unless Dir.exists?("save_games")
 		save_data = get_save_data
-		File.open("save_file.yml", "w") do |f|
+		
+		time = Time.now.strftime("%H%M%S")
+		date = Time.now.strftime("%d-%m-%Y")
+		file_name = "#{time}_#{date}.yml"
+
+		File.open("save_games/#{file_name}", "w") do |f|
 			f.puts YAML.dump(save_data)
 		end
 
 		print "Saving"
-		3.times do
+		3.times do # NEED TO CONVERT TO ONE LINE
 			sleep(0.5)
 			print "."
 		end

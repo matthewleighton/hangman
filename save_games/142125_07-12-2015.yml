@@ -1,0 +1,26 @@
+---
+wrong_guesses_remaining: 5
+word:
+- w
+- i
+- t
+- l
+- e
+- s
+- s
+hidden_word:
+- w
+- __
+- t
+- __
+- __
+- __
+- __
+played_letters:
+- z
+- y
+- x
+- w
+- v
+- u
+- t
