@@ -1,3 +1,5 @@
+require 'yaml'
+
 class Hangman
 	def initialize
 		print "Welcome to Hangman!\n\n"
@@ -30,7 +32,19 @@ class Hangman
 	end
 
 	def load_game
-		puts "Not yet implimented."
+		File.open("save.yml", "r") do |f|
+			game = YAML.load(f.read)
+			assign_load_variables(game)
+		end
+		puts "Welcome back!"
+		guessing_loop
+	end
+
+	def assign_load_variables(game)
+		@wrong_guesses_remaining = game["wrong_guesses_remaining"]
+		@word = game["word"]
+		@hidden_word = game["hidden_word"]
+		@played_letters = game["played_letters"]
 	end
 
 	def generate_word
@@ -57,7 +71,7 @@ class Hangman
 			end
 			letter_included? ? reveal_letter : incorrect_guess
 			add_played_letter
-			sleep(1) unless @word.include?(@guess)
+			#sleep(1) unless @word.include?(@guess)
 		end
 		@hidden_word == @word ? player_wins : player_loses
 	end
@@ -66,13 +80,17 @@ class Hangman
 		@guess = ""
 		until @guess =~ /^[a-z]$/
 			@guess = gets.chomp.downcase
-			save if @guess.downcase == "save"
+			save_game if @guess.downcase == "save"
 			puts "That is not a letter! Please enter a letter." unless @guess =~ /^[a-z]$/
 		end
 	end
 
-	def save
-		# add code to save game
+	def save_game
+		save_data = get_save_data
+		File.open("save.yml", "w") do |f|
+			f.puts YAML.dump(save_data)
+		end
+
 		print "Saving"
 		3.times do
 			sleep(0.5)
@@ -80,6 +98,16 @@ class Hangman
 		end
 		sleep(0.5)
 		abort("\nGoodbye!")
+	end
+
+	def get_save_data
+		save_data = {}
+		save_data["wrong_guesses_remaining"] = @wrong_guesses_remaining
+		save_data["word"] = @word
+		save_data["hidden_word"] = @hidden_word
+		save_data["played_letters"] = @played_letters
+
+		save_data
 	end
 
 	def letter_already_played?

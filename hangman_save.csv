@@ -1,0 +1,2 @@
+word, hidden_word, wrong_guesses_remaining, played_letters
+["s", "w", "a", "d", "d", "l", "e"], ["__", "__", "a", "__", "__", "__", "e"], 9, ["a", "e", "i"]
