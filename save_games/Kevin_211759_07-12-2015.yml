@@ -1,0 +1,26 @@
+---
+wrong_guesses_remaining: 3
+word:
+- n
+- e
+- s
+- t
+- o
+- r
+hidden_word:
+- __
+- e
+- __
+- __
+- __
+- __
+played_letters:
+- a
+- p
+- e
+- l
+- c
+- h
+- i
+- y
+name: Kevin
