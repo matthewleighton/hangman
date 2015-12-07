@@ -32,12 +32,32 @@ class Hangman
 	end
 
 	def load_game
-		File.open("save.yml", "r") do |f|
-			game = YAML.load(f.read)
-			assign_load_variables(game)
+		if File.exist?("save_file.yml")
+			File.open("save_file.yml", "r") do |f|
+				game = YAML.load(f.read)
+				assign_load_variables(game)
+			end
+			puts "Welcome back!"
+			guessing_loop
+		else
+			puts "No saved games found.\n\n"
+			main_menu
 		end
-		puts "Welcome back!"
-		guessing_loop
+	end
+
+	def save_game
+		save_data = get_save_data
+		File.open("save_file.yml", "w") do |f|
+			f.puts YAML.dump(save_data)
+		end
+
+		print "Saving"
+		3.times do
+			sleep(0.5)
+			print "."
+		end
+		sleep(0.5)
+		abort("\nGoodbye!")
 	end
 
 	def assign_load_variables(game)
@@ -83,21 +103,6 @@ class Hangman
 			save_game if @guess.downcase == "save"
 			puts "That is not a letter! Please enter a letter." unless @guess =~ /^[a-z]$/
 		end
-	end
-
-	def save_game
-		save_data = get_save_data
-		File.open("save.yml", "w") do |f|
-			f.puts YAML.dump(save_data)
-		end
-
-		print "Saving"
-		3.times do
-			sleep(0.5)
-			print "."
-		end
-		sleep(0.5)
-		abort("\nGoodbye!")
 	end
 
 	def get_save_data

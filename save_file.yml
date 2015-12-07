@@ -1,0 +1,30 @@
+---
+wrong_guesses_remaining: 7
+word:
+- a
+- p
+- o
+- l
+- l
+- o
+- n
+- i
+- a
+- n
+hidden_word:
+- a
+- __
+- __
+- __
+- __
+- __
+- __
+- i
+- a
+- __
+played_letters:
+- a
+- e
+- i
+- m
+- z
