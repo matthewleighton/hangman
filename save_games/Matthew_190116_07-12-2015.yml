@@ -1,30 +1,21 @@
 ---
 wrong_guesses_remaining: 7
 word:
-- c
 - o
-- n
-- c
-- e
-- r
-- t
-- i
-- z
-- e
+- a
+- k
+- u
+- m
 hidden_word:
-- c
+- o
+- a
 - __
 - __
-- c
-- __
-- __
-- __
-- __
-- z
 - __
 played_letters:
 - a
-- b
-- c
-- d
 - z
+- l
+- i
+- o
+name: Matthew

@@ -1,0 +1,31 @@
+---
+wrong_guesses_remaining: 4
+word:
+- h
+- e
+- a
+- d
+- a
+- c
+- h
+- y
+hidden_word:
+- h
+- __
+- a
+- __
+- a
+- c
+- h
+- __
+played_letters:
+- a
+- p
+- o
+- t
+- i
+- h
+- r
+- c
+- k
+name: Steve

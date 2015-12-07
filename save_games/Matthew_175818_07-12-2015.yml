@@ -1,0 +1,26 @@
+---
+wrong_guesses_remaining: 10
+word:
+- e
+- p
+- h
+- e
+- s
+- i
+- a
+- n
+- s
+hidden_word:
+- __
+- __
+- __
+- __
+- __
+- i
+- a
+- __
+- __
+played_letters:
+- a
+- i
+name: Matthew

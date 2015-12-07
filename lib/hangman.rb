@@ -8,12 +8,12 @@ class Hangman
 	def main_menu
 		input = " "
 		until input == "1" || input == "2"
-			puts "[1] - New Game\n[2] - Load Game"
+			puts "[1] - New Game\n[2] - View saves"
 			input = gets.chomp
 			if input == "1"
 				new_game
 			elsif input == "2"
-				load_game
+				view_saves
 			else
 				puts "Invalid entry. Enter either 1 or 2.\n\n"
 			end
@@ -21,6 +21,7 @@ class Hangman
 	end
 
 	def new_game
+		@name = enter_name
 		@wrong_guesses_remaining = 10
 		@word = generate_word
 		@hidden_word = generate_hidden_word
@@ -30,34 +31,74 @@ class Hangman
 		guessing_loop
 	end
 
-	def load_game
+	def enter_name
+		puts "Enter your name."
+		gets.chomp
+	end
+
+	def view_saves
 		Dir.mkdir("save_games") unless Dir.exists?("save_games")
 		save_files = Dir["./save_games/*"]
+
 		if save_files == []
-			puts "\nNo saves games found.\n\n"
+			puts "\nNo saved games found.\n\n"
 			main_menu
 		else
 			puts "\nChoose a save."
 			save_files.each_with_index do |file, index|
-				puts "[#{index + 1}] - #{file}"
+				puts "[#{index + 1}] - #{list_game_save(file)}"
+				#puts "[#{index + 1}] - #{file}"
 			end
 			input = gets.to_i
 			until input.between?(1, save_files.count)
-				puts "please enter a valid number."
+				puts "There is no save with that number."
+				input = gets.to_i
 			end
 			file = save_files[input-1]
-			File.open(file, "r") do |f|
-				game = YAML.load(f.read)
-				assign_load_variables(game)
-			end
-			puts "Welcome back!"
-			guessing_loop
+			open_or_delete_file(file)			
 		end
 	end
 
 	def list_game_save(file)
-		# Output names as "[1] - 12:16:59 07/12/2015"
+		file = file.match(/s\/(.+)/).to_s[2..-5].gsub("-", "/").gsub("_", " ")
+		date = file.slice!(/\d+/).insert(2, ":").insert(5, ":")
+		file.insert(-12, date)
+	end
+
+	def open_or_delete_file(file)
 		puts file
+		puts "[1] - Load save\n[2] - Delete save"
+		input = gets.to_i
+		until input.to_i.between?(1,2)
+			puts "Invalid entry.\n[1] - Load save\n[2] - Delete save"
+			input = gets.chomp
+		end
+		if input == 1
+			load_game(file)
+		elsif input == 2
+			puts confirm_delete_file?(file) ? delete_file(file) : "File not deleted."
+			view_saves
+		end
+	end
+
+	def confirm_delete_file?(file)
+		puts "Are you sure you want to delete the save #{file}?\nY/N"
+		input = gets.chomp.upcase
+		input == "Y" ? true : false
+	end
+
+	def delete_file(file)
+		File.delete(file)
+		puts "Save deleted"
+	end
+
+	def load_game(file)
+		File.open(file, "r") do |f|
+			game = YAML.load(f.read)
+			assign_load_variables(game)
+		end
+		puts "Welcome back!"
+		guessing_loop
 	end
 
 	def save_game
@@ -66,7 +107,7 @@ class Hangman
 		
 		time = Time.now.strftime("%H%M%S")
 		date = Time.now.strftime("%d-%m-%Y")
-		file_name = "#{time}_#{date}.yml"
+		file_name = "#{@name}_#{time}_#{date}.yml"
 
 		File.open("save_games/#{file_name}", "w") do |f|
 			f.puts YAML.dump(save_data)
@@ -81,11 +122,23 @@ class Hangman
 		abort("\nGoodbye!")
 	end
 
+	def get_save_data
+		save_data = {}
+		save_data["wrong_guesses_remaining"] = @wrong_guesses_remaining
+		save_data["word"] = @word
+		save_data["hidden_word"] = @hidden_word
+		save_data["played_letters"] = @played_letters
+		save_data["name"] = @name
+
+		save_data
+	end
+
 	def assign_load_variables(game)
 		@wrong_guesses_remaining = game["wrong_guesses_remaining"]
 		@word = game["word"]
 		@hidden_word = game["hidden_word"]
 		@played_letters = game["played_letters"]
+		@name = game["name"]
 	end
 
 	def generate_word
@@ -124,16 +177,6 @@ class Hangman
 			save_game if @guess.downcase == "save"
 			puts "That is not a letter! Please enter a letter." unless @guess =~ /^[a-z]$/
 		end
-	end
-
-	def get_save_data
-		save_data = {}
-		save_data["wrong_guesses_remaining"] = @wrong_guesses_remaining
-		save_data["word"] = @word
-		save_data["hidden_word"] = @hidden_word
-		save_data["played_letters"] = @played_letters
-
-		save_data
 	end
 
 	def letter_already_played?
